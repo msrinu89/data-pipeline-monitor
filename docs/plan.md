@@ -1,6 +1,6 @@
 # Client-Specific Databricks Job Monitoring Portal
 
-**Status:** Reviewed initial plan. Source: 24 screenshots in [`req/`](req/). This repository has no application implementation yet.
+**Status:** Reviewed initial plan. A frontend prototype with sample data is now implemented; backend integration and production security controls remain planned. The initial requirements were reviewed from 24 screenshots; those source screenshots are not included in this repository.
 
 ## 1. Goal and scope
 
