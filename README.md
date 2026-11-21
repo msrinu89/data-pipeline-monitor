@@ -61,6 +61,8 @@ Platform credentials will remain within the collector runtime. Diagnostic collec
 
 See the [Databricks MVP plan](docs/plan.md) for detailed scope, architecture, security requirements, acceptance criteria, and open decisions.
 
+For implementation work, start with [repository guidance](AGENTS.md), [project context](docs/project-context.md), and the [feature development guide](docs/feature-development.md). These distinguish the current frontend prototype from the planned backend and explain how to extend it.
+
 ## Run the frontend locally
 
 Requires Node.js 22.12 or newer and npm.
@@ -76,6 +78,7 @@ Open the local URL printed by Vite (normally `http://127.0.0.1:5173`).
 npm run build      # Type-check and build production assets into dist/
 npm run preview    # Serve the production build locally
 npm test           # Check sample-data consistency
+npm run test:e2e   # Smoke test the production build (install Chromium first)
 npm run format     # Format frontend source
 ```
 
@@ -88,3 +91,21 @@ The prototype includes an overview with metrics and activity charts, searchable 
 - `src/styles.css`: responsive layouts and visual styling.
 
 Metrics derive from the same sample runs used in the history views. Task graphs and diagnostic text are illustrative. View state resets on reload; bookmarkable run URLs, real authentication, platform permissions, and backend integration remain future work. Google Fonts is optional; system sans-serif fonts are used when it is unavailable.
+
+## Pull request checks
+
+[Frontend CI](.github/workflows/ci.yml) runs on every pull request and push to `main`, and can also be started manually. It installs dependencies with `npm ci`, runs unit tests, type-checks and builds the UI, then opens the production build in Chromium to verify rendering, failed-run diagnostics, mobile navigation, and search.
+
+To reproduce the checks locally:
+
+```bash
+npm ci
+npx playwright install chromium
+npm test
+npm run build
+npm run test:e2e
+```
+
+The smoke tests start and stop a preview server on port 4173. CI stores the browser report and a `frontend-dist` artifact containing the validated static assets for seven days. The artifact can be served by a static host; the workflow does not deploy it or validate a particular hosting environment.
+
+To prevent merging a failing PR, configure a branch rule/ruleset for `main` that requires the **Build and smoke test** status check. Adding the workflow alone does not enforce merge protection.
